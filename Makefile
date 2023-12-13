@@ -33,3 +33,11 @@ push-docker: build-docker
 deploy-docker: push-docker
 	@echo "Installing zenoh-tailscale on $(TARGET_HOST)"
 	mosquitto_pub -h homepi -t "zenoh-tailscale/build" -n
+
+
+.PHONY: upload-release-github
+upload-release-github: build-docker build-deb
+	gh release create v$$(cargo get package.version) --title v$$(cargo get package.version) --notes "" docker_out/zenoh-tailscale docker_out/zenoh-tailscale.deb
+	# TODO: Figure out how to upload non raspberry pi packages alongside the main ones
+	# gh release upload $$(cargo get package.version) target/release/zenoh-tailscale target/debian/zenoh-tailscale_*.deb
+	@echo deb image at https://github.com/dmweis/zenoh-tailscale/releases/latest/download/zenoh-tailscale.deb
