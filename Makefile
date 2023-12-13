@@ -27,7 +27,7 @@ build-docker:
 
 .PHONY: push-docker
 push-docker: build-docker
-	rsync -avz --delete docker_out/* $(TARGET_HOST_USER):/home/$(TARGET_USERNAME)/zenoh-tailscale
+	rsync -avz --delete docker_out/* $(TARGET_HOST_USER):/home/$(TARGET_USERNAME)/zenoh-tailscale/
 
 .PHONY: deploy-docker
 deploy-docker: push-docker
