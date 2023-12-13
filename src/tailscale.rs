@@ -22,7 +22,7 @@ impl TailscaleStatus {
     }
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Deserialize, Serialize, PartialEq, Eq)]
 pub struct TailscaleStatus {
     #[serde(rename = "TailscaleIPs")]
     pub tailscale_ip_list: Vec<String>,
@@ -32,7 +32,7 @@ pub struct TailscaleStatus {
     pub peers: HashMap<String, TailscalePeer>,
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Deserialize, Serialize, PartialEq, Eq)]
 pub struct TailscaleStatusSelf {
     #[serde(rename = "ID")]
     pub id: String,
@@ -44,7 +44,7 @@ pub struct TailscaleStatusSelf {
     pub tailscale_ip_list: Vec<String>,
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Deserialize, Serialize, PartialEq, Eq)]
 pub struct TailscalePeer {
     #[serde(rename = "ID")]
     pub id: String,

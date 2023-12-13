@@ -8,3 +8,9 @@ This little app can be installed on each Tailscale node to serve as a relay for 
 ## Status
 
 This project is very unfinished
+
+## Deploy
+
+```bash
+TARGET_HOST=somepi TARGET_USERNAME=pi make deploy-docker
+```

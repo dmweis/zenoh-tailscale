@@ -1,0 +1,15 @@
+[Unit]
+Description=zenoh-tailscale
+After=network-online.target nss-lookup.target
+Wants=network-online.target
+
+[Service]
+User=zenoh-tailscale
+DynamicUser=yes
+Type=simple
+Restart=on-failure
+RestartSec=5s
+ExecStart=/usr/bin/zenoh-tailscale
+
+[Install]
+WantedBy=default.target

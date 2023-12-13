@@ -2,8 +2,9 @@ mod tailscale;
 
 use anyhow::Context;
 use clap::Parser;
-use std::path::PathBuf;
+use std::{path::PathBuf, time::Duration};
 use tailscale::TailscaleStatus;
+use tokio::{select, time::sleep};
 use tracing::info;
 use zenoh::prelude::r#async::*;
 
@@ -27,31 +28,67 @@ async fn main() -> anyhow::Result<()> {
     setup_tracing();
     let args = Cli::parse();
 
-    let tailscale_info = TailscaleStatus::read_from_command().await?;
+    let mut tailscale_info = TailscaleStatus::read_from_command().await?;
 
     let zenoh_config = build_zenoh_config(&tailscale_info, args.zenoh_config.clone())?;
-
-    let zenoh_session = zenoh::open(zenoh_config.clone())
+    let mut zenoh_session = zenoh::open(zenoh_config)
         .res()
         .await
-        .map_err(ErrorWrapper::ZenohError)?
-        .into_arc();
+        .map_err(ErrorWrapper::ZenohError)?;
+    print_session_info(&zenoh_session).await;
+    loop {
+        select! {
+            _ = sleep(Duration::from_secs(10)) => {
+                // nothing
+            }
+            _ = tokio::signal::ctrl_c() => {
+                info!("Ctrl+C detected. Exiting");
+                break;
+            }
+        }
 
+        let new_tailscale_info = TailscaleStatus::read_from_command().await?;
+        if new_tailscale_info != tailscale_info {
+            info!("Tailscale config changed. Reloading");
+
+            // close old session
+            zenoh_session
+                .close()
+                .res()
+                .await
+                .map_err(ErrorWrapper::ZenohError)?;
+
+            tailscale_info = new_tailscale_info;
+
+            let zenoh_config = build_zenoh_config(&tailscale_info, args.zenoh_config.clone())?;
+            zenoh_session = zenoh::open(zenoh_config)
+                .res()
+                .await
+                .map_err(ErrorWrapper::ZenohError)?;
+
+            print_session_info(&zenoh_session).await;
+        }
+    }
+    zenoh_session
+        .close()
+        .res()
+        .await
+        .map_err(ErrorWrapper::ZenohError)?;
+
+    Ok(())
+}
+
+async fn print_session_info(zenoh_session: &Session) {
     let info = zenoh_session.info();
-
-    info!("zid: {}", info.zid().res().await);
+    info!("Session zid: {:?}", info.zid().res().await);
     info!(
-        "routers zid: {:?}",
+        "Routers zid: {:?}",
         info.routers_zid().res().await.collect::<Vec<ZenohId>>()
     );
     info!(
-        "peers zid: {:?}",
+        "Peers zid: {:?}",
         info.peers_zid().res().await.collect::<Vec<ZenohId>>()
     );
-
-    tokio::signal::ctrl_c().await?;
-
-    Ok(())
 }
 
 fn build_zenoh_config(
