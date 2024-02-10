@@ -5,7 +5,7 @@ use clap::Parser;
 use std::{path::PathBuf, time::Duration};
 use tailscale::TailscaleStatus;
 use tokio::{select, time::sleep};
-use tracing::info;
+use tracing::{error, info};
 use zenoh::prelude::r#async::*;
 
 /// Selected with a random dice roll
@@ -100,6 +100,11 @@ fn build_zenoh_config(
     } else {
         zenoh::config::Config::default()
     };
+
+    if config.scouting.gossip.set_multihop(Some(true)).is_err() {
+        error!("Failed to set multihop");
+        anyhow::bail!("Failed to set multihop")
+    }
 
     let mut listening_addresses = vec![];
     for local_address in &tailscale_status.tailscale_ip_list {
