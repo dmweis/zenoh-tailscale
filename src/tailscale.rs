@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 
 use anyhow::Context;
 use serde::{Deserialize, Serialize};
@@ -25,7 +25,7 @@ impl TailscaleStatus {
 #[derive(Debug, Deserialize, Serialize, PartialEq, Eq)]
 pub struct TailscaleStatus {
     #[serde(rename = "TailscaleIPs")]
-    pub tailscale_ip_list: Vec<String>,
+    pub tailscale_ip_list: HashSet<String>,
     #[serde(rename = "Self")]
     pub self_status: TailscaleStatusSelf,
     #[serde(rename = "Peer")]
@@ -41,7 +41,7 @@ pub struct TailscaleStatusSelf {
     #[serde(rename = "DNSName")]
     pub dns_name: String,
     #[serde(rename = "TailscaleIPs")]
-    pub tailscale_ip_list: Vec<String>,
+    pub tailscale_ip_list: HashSet<String>,
 }
 
 #[derive(Debug, Deserialize, Serialize, PartialEq, Eq)]
@@ -53,5 +53,5 @@ pub struct TailscalePeer {
     #[serde(rename = "DNSName")]
     pub dns_name: String,
     #[serde(rename = "TailscaleIPs")]
-    pub tailscale_ip_list: Vec<String>,
+    pub tailscale_ip_list: HashSet<String>,
 }

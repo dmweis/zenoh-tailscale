@@ -10,11 +10,6 @@ use zenoh::prelude::r#async::*;
 
 /// Selected with a random dice roll
 const TCP_DISCOVERY_PORT: u16 = 7435;
-/// Selected with a random dice roll
-const UDP_DISCOVERY_PORT: u16 = 7436;
-
-const LEGACY_TCP_DISCOVERY_PORT: u16 = 7447;
-const LEGACY_UDP_DISCOVERY_PORT: u16 = 7448;
 
 #[derive(Parser, Debug)]
 #[command(version, author, about)]
@@ -120,15 +115,8 @@ fn build_zenoh_config(
             "",
         )
         .map_err(ErrorWrapper::ZenohError)?;
-        let udp = zenoh_config::EndPoint::new(
-            "udp",
-            format!("{}:{}", local_address, UDP_DISCOVERY_PORT),
-            "",
-            "",
-        )
-        .map_err(ErrorWrapper::ZenohError)?;
+
         listening_addresses.push(tcp);
-        listening_addresses.push(udp);
     }
 
     config.listen.endpoints.extend(listening_addresses);
@@ -152,26 +140,13 @@ fn build_peer_endpoints_for_address(address: &str) -> anyhow::Result<Vec<zenoh_c
         // skip IPv6 because pain
         return Ok(vec![]);
     }
-    let endpoints = vec![
-        zenoh_config::EndPoint::new(
-            "tcp",
-            format!("{}:{}", address, LEGACY_TCP_DISCOVERY_PORT),
-            "",
-            "",
-        )
-        .map_err(ErrorWrapper::ZenohError)?,
-        zenoh_config::EndPoint::new(
-            "udp",
-            format!("{}:{}", address, LEGACY_UDP_DISCOVERY_PORT),
-            "",
-            "",
-        )
-        .map_err(ErrorWrapper::ZenohError)?,
-        zenoh_config::EndPoint::new("tcp", format!("{}:{}", address, TCP_DISCOVERY_PORT), "", "")
-            .map_err(ErrorWrapper::ZenohError)?,
-        zenoh_config::EndPoint::new("udp", format!("{}:{}", address, UDP_DISCOVERY_PORT), "", "")
-            .map_err(ErrorWrapper::ZenohError)?,
-    ];
+    let endpoints = vec![zenoh_config::EndPoint::new(
+        "tcp",
+        format!("{}:{}", address, TCP_DISCOVERY_PORT),
+        "",
+        "",
+    )
+    .map_err(ErrorWrapper::ZenohError)?];
 
     Ok(endpoints)
 }

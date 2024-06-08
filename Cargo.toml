@@ -7,7 +7,7 @@ name = "zenoh-tailscale"
 publish = false
 readme = "README.md"
 repository = "https://github.com/dmweis/zenoh-tailscale"
-version = "0.2.0"
+version = "0.3.0"
 
 
 [package.metadata.deb]
@@ -42,5 +42,5 @@ tracing-subscriber = {version = "0.3", features = [
 ]}
 
 # zenoh
-zenoh = "0.7.2-rc"
-zenoh-config = "0.7.2-rc"
+zenoh = "0.11.0"
+zenoh-config = "0.11.0"

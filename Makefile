@@ -45,3 +45,7 @@ upload-release-github: build-docker build-deb
 upload-release-github-amd64: build-deb
 	gh release upload v$$(cargo get package.version) target/debian/zenoh-tailscale_*amd64.deb
 	@echo deb image at https://github.com/dmweis/zenoh-tailscale/releases/latest/download/zenoh-tailscale.deb
+
+.PHONY: deploy-with-ez-cd
+deploy-with-ez-cd: build-docker
+	ez-cd-cli -f docker_out/zenoh-tailscale.deb -d ${TARGET_HOST}
