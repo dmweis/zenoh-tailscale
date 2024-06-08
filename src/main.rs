@@ -9,7 +9,7 @@ use tracing::{error, info};
 use zenoh::prelude::r#async::*;
 
 /// Selected with a random dice roll
-const TCP_DISCOVERY_PORT: u16 = 7435;
+const TCP_DISCOVERY_PORT: u16 = 7436;
 
 #[derive(Parser, Debug)]
 #[command(version, author, about)]
