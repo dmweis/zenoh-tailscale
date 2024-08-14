@@ -119,6 +119,8 @@ fn build_zenoh_config(
         listening_addresses.push(tcp);
     }
 
+    info!("Listening addresses {listening_addresses:?}");
+
     config.listen.endpoints.extend(listening_addresses);
 
     let mut peer_addresses = vec![];
@@ -128,6 +130,8 @@ fn build_zenoh_config(
             peer_addresses.extend(tmp);
         }
     }
+
+    info!("Peer addresses {peer_addresses:?}");
 
     config.connect.endpoints.extend(peer_addresses);
 

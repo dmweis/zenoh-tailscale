@@ -7,39 +7,30 @@ name = "zenoh-tailscale"
 publish = false
 readme = "README.md"
 repository = "https://github.com/dmweis/zenoh-tailscale"
-version = "0.3.0"
+version = "0.3.1"
 
 
 [package.metadata.deb]
-assets = [
-  [
-    "target/release/zenoh-tailscale",
-    "/usr/bin/",
-    "755",
-  ],
-]
+assets = [["target/release/zenoh-tailscale", "/usr/bin/", "755"]]
 maintainer = "David Weis <dweis7@gmail.com>"
 maintainer-scripts = "debian/"
 
 [package.metadata.deb.systemd-units]
 
 [dependencies]
-tokio = {version = "1", features = ["full"]}
+tokio = { version = "1", features = ["full"] }
 
 # utilities
-anyhow = {version = "1.0", features = ["backtrace"]}
-clap = {version = "4.2", features = ["derive"]}
+anyhow = { version = "1.0", features = ["backtrace"] }
+clap = { version = "4.2", features = ["derive"] }
 config = "0.13"
-serde = {version = "1.0", features = ["derive"]}
+serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 thiserror = "1.0"
 
 # logging
-tracing = {version = "0.1", features = ["log"]}
-tracing-subscriber = {version = "0.3", features = [
-  "registry",
-  "json",
-]}
+tracing = { version = "0.1", features = ["log"] }
+tracing-subscriber = { version = "0.3", features = ["registry", "json"] }
 
 # zenoh
 zenoh = "0.11.0"
